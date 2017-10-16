@@ -41,7 +41,7 @@ private:
 	cout << "SCORE: " << score << endl << endl;
 	for( int y = 0; y < 4; y++ )
 	{
-	    cout << "+------+------+------+------+" << endl << "| ";
+	    cout  << endl << "| ";
 	    for( int x = 0; x < 4; x++ )
 	    {
 		if( !board[x][y].val ) cout << setw( 4 ) << " ";
@@ -50,18 +50,18 @@ private:
 	    }
 	    cout << endl;
 	}
-	cout << "+------+------+------+------+" << endl << endl;
+	cout <<  endl << endl;
     }
     void waitKey()
     {
 	moved = false; char c; 
-	cout << "(W)Up (S)Down (A)Left (D)Right "; cin >> c; c &= 0x5F;
+	cout << "(K)Up (J)Down (H)Left (L)Right (Q)Exit "; cin >> c; c &= 0x5F;
 	switch( c )
-	{
-	    case 'W': move( UP );break;
-	    case 'A': move( LEFT ); break;
-	    case 'S': move( DOWN ); break;
-	    case 'D': move( RIGHT );
+	{   case 'Q': exit(1);
+	    case 'K': move( UP );break;
+	    case 'H': move( LEFT ); break;
+	    case 'J': move( DOWN ); break;
+	    case 'L': move( RIGHT );
 	}
 	for( int y = 0; y < 4; y++ )
 	    for( int x = 0; x < 4; x++ )
