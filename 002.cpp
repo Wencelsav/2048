@@ -30,9 +30,7 @@ public:
 	    if( done ) break;
 	    waitKey();
 	}
-	string s = "Game Over!";
-	if( win ) s = "You've made it!";
-	cout << s << endl << endl;
+	
     }
 private:
     void drawBoard()
@@ -79,7 +77,7 @@ private:
 		    while( board[a][b].val );
  
 		    int s = rand() % 100;
-		    if( s > 89 ) board[a][b].val = 4;
+		    if( s > 91 ) board[a][b].val = 4;
 		    else board[a][b].val = 2;
 		    if( canMove() ) return;
 		}
