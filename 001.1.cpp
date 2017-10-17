@@ -1,173 +1,114 @@
-#include <time.h>
 #include <iostream>
-#include <string>
-#include <iomanip>
-#include <cstdlib>
- 
-typedef unsigned int uint;
+#include <ctime>
 using namespace std;
-enum movDir { UP, DOWN, LEFT, RIGHT };
- 
-class tile
-{
-public:
-    tile() : val( 0 ), blocked( false ) {}
-    uint val;
-    bool blocked;
-};
- 
-class g2048
-{
-public:
-    g2048() : done( false ), win( false ), moved( true ), score( 0 ) {}
-    void loop()
-    {
-	addTile(); 
-	while( true )
-	{
-	    if( moved ) addTile();
-	    if( done ) break;
-	    waitKey();
-	}
-    }
-private:
-    
-    void waitKey()
-    {
-	moved = false; char c; 
-	cout << "(K)Up (J)Down (H)Left (L)Right (Q)Exit "; cin >> c; c &= 0x5F;
-	switch( c )
-	{   case 'Q': exit(1);
-	    case 'K': move( UP );break;
-	    case 'H': move( LEFT ); break;
-	    case 'J': move( DOWN ); break;
-	    case 'L': move( RIGHT );
-	}
-	for( int y = 0; y < 4; y++ )
-	    for( int x = 0; x < 4; x++ )
-		board[x][y].blocked = false;
-    }
-    void addTile()
-    {
-	for( int y = 0; y < 4; y++ )
-	    for( int x = 0; x < 4; x++ )
-		if( !board[x][y].val )
-		{
-		    uint a, b;
-		    do
-		    { a = rand() % 4; b = rand() % 4;
-		   board[a][b].val
- 
-		    int s = rand() % 100;
-		    if( s > 91) board[a][b].val = 4;
-		    else board[a][b].val = 2;
-		}}
-	done = true;
-    }
-    bool canMove()
-    {
-	for( int y = 0; y < 4; y++ )
-	    for( int x = 0; x < 4; x++ )
-		if( !board[x][y].val ) return true;
- 
-	for( int y = 0; y < 4; y++ )
-	    for( int x = 0; x < 4; x++ )
-	    {
-		if( testAdd( x + 1, y, board[x][y].val ) ) return true;
-		if( testAdd( x - 1, y, board[x][y].val ) ) return true;
-		if( testAdd( x, y + 1, board[x][y].val ) ) return true;
-		if( testAdd( x, y - 1, board[x][y].val ) ) return true;
-	    }
-	return false;
-    }
-    bool testAdd( int x, int y, uint v )
-    {
-	if( x < 0 || x > 3 || y < 0 || y > 3 ) return false;
-	return board[x][y].val == v;
-    }
-    void moveVert( int x, int y, int d )
-    {
-	if( board[x][y + d].val && board[x][y + d].val == board[x][y].val && !board[x][y].blocked && !board[x][y + d].blocked  )
-	{
-	    board[x][y].val = 0;
-	    board[x][y + d].val *= 2;
-	    score += board[x][y + d].val;
-	    board[x][y + d].blocked = true;
-	    moved = true;
-	}
-	else if( !board[x][y + d].val && board[x][y].val )
-	{
-	    board[x][y + d].val = board[x][y].val;
-	    board[x][y].val = 0;
-	    moved = true;
-	}
-	if( d > 0 ) { if( y + d < 3 ) moveVert( x, y + d,  1 ); }
-	else        { if( y + d > 0 ) moveVert( x, y + d, -1 ); }
-    }
-    void moveHori( int x, int y, int d )
-    {
-	if( board[x + d][y].val && board[x + d][y].val == board[x][y].val && !board[x][y].blocked && !board[x + d][y].blocked  )
-	{
-	    board[x][y].val = 0;
-	    board[x + d][y].val *= 2;
-	    score += board[x + d][y].val;
-	    board[x + d][y].blocked = true;
-	    moved = true;
-	}
-	else if( !board[x + d][y].val && board[x][y].val )
-	{
-	    board[x + d][y].val = board[x][y].val;
-	    board[x][y].val = 0;
-	    moved = true;
-	}
-	if( d > 0 ) { if( x + d < 3 ) moveHori( x + d, y,  1 ); }
-	else        { if( x + d > 0 ) moveHori( x + d, y, -1 ); }
-    }
-    void move( movDir d )
-    {
-	switch( d )
-	{
-	    case UP:
-	    	for( int x = 0; x < 4; x++ )
-		{
-		    int y = 1;
-		    while( y < 4 )
-		    { if( board[x][y].val ) moveVert( x, y, -1 ); y++;}
-		}
-		break;
-	    case DOWN:
-		for( int x = 0; x < 4; x++ )
-		{
-		    int y = 2;
-		    while( y >= 0 )
-		    { if( board[x][y].val ) moveVert( x, y, 1 ); y--;}
-		}
-		break;
-	    case LEFT:
-		for( int y = 0; y < 4; y++ )
-		{
-		    int x = 1;
-		    while( x < 4 )
-		    { if( board[x][y].val ) moveHori( x, y, -1 ); x++;}
-		}
-		break;
-	    case RIGHT:
-		for( int y = 0; y < 4; y++ )
-		{
-		    int x = 2;
-		    while( x >= 0 )
-		    { if( board[x][y].val ) moveHori( x, y, 1 ); x--;}
-		}
-	}
-    }
-    tile board[4][4];
-    bool win, done, moved;
-    uint score;
-};
-int main( int argc, char* argv[] )
-{
-    srand( static_cast<uint>( time( NULL ) ) );
-    g2048 g; g.loop();
-    return system( "pause" );
+int bmp[4][4];
+void initmas(int u[4]){
+    for(int i=0;i<4;i++){u[i]=0;}
 }
- 
+void initmas(int u[4][4]){
+    for(int i=0;i<4;i++){for(int j=0;j<4;j++){u[i][j]=0;}}
+}
+
+void init(){
+    initmas(bmp);
+    srand(time(NULL));
+    uint g,r;
+    g= rand()%4;
+    r=rand()%4;
+    int s = rand()%100;
+    if(s>91) {bmp[g][r]=4;}
+    else { bmp [g][r]=2;} 
+}
+void up(int uper[4][4]){
+
+
+    for(int j=0;j<4;j++){int y[4];initmas(y);int n=0;
+        for(int i=0;i<4;i++){if(uper[j][i]!=0){y[n]=uper[j][i];n++;}}
+
+        for(int z=0;z<4;z++){if((y[z]==y[z+1])&&(y[z]!=0)){y[z]+=y[z+1];y[z+1]=0;}}
+
+        for(int w=0;w<3;w++){if(y[w]==0){y[w]=y[w+1];y[w+1]=0;}}
+
+        for(int i=0;i<4;i++){uper[j][i]=y[i];};
+    }
+
+
+}
+
+void down(int uper[4][4]){
+
+
+    for(int j=0;j<4;j++){int y[4];initmas(y);int n=3;
+        for(int i=3;i>-1;i--){if(uper[j][i]!=0){y[n]=uper[j][i];n--;}}
+
+        for(int z=3;z>0;z--){if((y[z]==y[z-1])&&(y[z]!=0)){y[z]+=y[z-1];y[z-1]=0;}}
+
+        for(int w=3;w>0;w--){if(y[w]==0){y[w]=y[w-1];y[w-1]=0;}}
+
+        for(int i=0;i<4;i++){uper[j][i]=y[i];};
+    }
+
+
+}
+void left(int uper[4][4]){
+
+    for(int j=0;j<4;j++){int y[4];initmas(y);int n=0;
+        for(int i=0;i<4;i++){if(uper[i][j]!=0){y[n]=uper[i][j];n++;}}
+
+        for(int z=0;z<4;z++){if((y[z]==y[z+1])&&(y[z]!=0)){y[z]+=y[z+1];y[z+1]=0;}}
+
+        for(int w=0;w<3;w++){if(y[w]==0){y[w]=y[w+1];y[w+1]=0;}}
+
+        for(int i=0;i<4;i++){uper[i][j]=y[i];};
+    }
+
+
+
+}
+void right(int uper[4][4]){
+
+    for(int j=0;j<4;j++){int y[4];initmas(y);int n=3;
+        for(int i=3;i>-1;i--){if(uper[i][j]!=0){y[n]=uper[i][j];n--;}}
+
+        for(int z=3;z>0;z--){if((y[z]==y[z-1])&&(y[z]!=0)){y[z]+=y[z-1];y[z-1]=0;}}
+
+        for(int w=3;w>0;w--){if(y[w]==0){y[w]=y[w-1];y[w-1]=0;}}
+
+        for(int i=0;i<4;i++){uper[i][j]=y[i];};
+    }
+
+
+}
+void bmpout(){
+    for(int j=0;j<4;j++){
+        for(int i=0;i<4;i++){
+            if(bmp[i][j]==0){cout<<"*"<<" ";continue;}cout<<bmp[i][j]<<" ";
+        } cout<<"\n";
+    }
+    cout<<"\n";
+}
+int main() {char com=' ';
+    init();
+
+    while(com!='q'){
+
+        switch(com){
+            case 'j':
+               down(bmp);
+                break;
+            case 'k':
+                up(bmp);
+                break;
+            case 'h':
+                left(bmp);
+                break;
+            case 'l':
+                right(bmp);
+                break;
+
+        }
+        bmpout();
+        cin>>com;
+    }
+    return 0;
+}
