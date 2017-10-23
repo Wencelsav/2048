@@ -73,10 +73,9 @@ private:
 		{ 
     
 		    uint a, b;
-		    a = rand() % 4; b = rand() % 4;
 		    int s = rand() % 100;
-        if( s > 91 ) {board[a][b].val = 4; board[a][b].val = 4; board[a][b].val = 4;}
-		    else {board[a][b].val = 2; board[a][b].val = 2; board[a][b].val = 2;}
+        if( s > 91 ) {board[1][0].val = 4; board[2][3].val = 4; }
+		    else {board[0][3].val = 2; board[3][0].val = 2;}
 		    if( canMove() ) return;
 		}
 	done = true;
